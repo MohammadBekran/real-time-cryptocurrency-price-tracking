@@ -1,8 +1,9 @@
 "use client";
 
-import { ChartPanel } from "@/components/ChartPanel";
-import { useTrades } from "@/core/hooks/useTrades";
-import { useState, useEffect, useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
+
+import ChartPanel from "@/features/home/components/chart-panel";
+import { useTrades } from "@/features/home/core/hooks";
 
 const Home = () => {
   const { trades, marketData, addTrade, updateMarketData } = useTrades();
