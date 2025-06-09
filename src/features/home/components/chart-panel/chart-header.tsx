@@ -1,23 +1,41 @@
 import { animated, SpringValue } from "@react-spring/web";
 
-import { CHART_MARGIN } from "@/features/home/core/constants";
-
 interface IChartHeaderProps {
   symbol: string;
   isConnected: boolean;
   priceSpring: { price: SpringValue<number> };
   priceChange: number;
   priceChangeSpring: { change: SpringValue<number> };
-  livePricePositionSpring: { y: SpringValue<number> };
 }
 
+/**
+ * ChartHeader component displays the trading pair information, connection status,
+ * current price, and price change percentage with smooth animations.
+ *
+ * @param {IChartHeaderProps} props - Component props
+ * @param {string} props.symbol - Trading pair symbol (e.g., "btcusdt")
+ * @param {boolean} props.isConnected - WebSocket connection status
+ * @param {{ price: SpringValue<number> }} props.priceSpring - Animated price value using react-spring
+ * @param {number} props.priceChange - Current price change percentage
+ * @param {{ change: SpringValue<number> }} props.priceChangeSpring - Animated price change value using react-spring
+ *
+ * @example
+ * ```tsx
+ * <ChartHeader
+ *   symbol="btcusdt"
+ *   isConnected={true}
+ *   priceSpring={{ price: animated(50000) }}
+ *   priceChange={2.5}
+ *   priceChangeSpring={{ change: animated(2.5) }}
+ * />
+ * ```
+ */
 const ChartHeader = ({
   symbol,
   isConnected,
   priceSpring,
   priceChange,
   priceChangeSpring,
-  livePricePositionSpring,
 }: IChartHeaderProps) => {
   return (
     <div className="flex justify-between items-center mb-6">
@@ -41,8 +59,8 @@ const ChartHeader = ({
           {priceSpring.price.to(
             (p: number) =>
               `$${p.toLocaleString(undefined, {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2,
+                minimumFractionDigits: 5,
+                maximumFractionDigits: 5,
               })}`
           )}
         </animated.div>
@@ -60,29 +78,6 @@ const ChartHeader = ({
             {priceChangeSpring.change.to((c: number) => `${c.toFixed(2)}%`)}
           </animated.span>
         </div>
-        <animated.div
-          id="live-price-display"
-          className="absolute bg-yellow-400 text-slate-900 px-3 py-1.5 rounded-md font-bold text-sm z-10"
-          style={{
-            right: `${CHART_MARGIN.right + 100}px`,
-            transform: livePricePositionSpring.y.to(
-              (y: number) => `translateY(${y}px)`
-            ),
-          }}
-        >
-          <span className="relative inline-flex items-center">
-            <span className="relative">Live</span>
-          </span>
-          <div className="h-1" />
-          <animated.span>
-            {priceSpring.price.to((p: number) =>
-              p.toLocaleString(undefined, {
-                minimumFractionDigits: 5,
-                maximumFractionDigits: 5,
-              })
-            )}
-          </animated.span>
-        </animated.div>
       </div>
     </div>
   );

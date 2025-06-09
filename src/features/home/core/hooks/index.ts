@@ -8,6 +8,24 @@ import type {
   ITradeHistory,
 } from "@/features/home/core/types";
 
+/**
+ * Custom hook for managing real-time price data from Binance
+ * Provides price updates, historical data, and connection status
+ * Falls back to mock data if the API is unavailable
+ *
+ * @param {string} [symbol="btcusdt"] - Trading pair symbol
+ * @param {number} [maxPoints=120] - Maximum number of historical points to maintain
+ * @returns {Object} Price data and connection status
+ * @returns {number|null} returns.price - Current price
+ * @returns {IPricePoint[]} returns.history - Historical price data
+ * @returns {boolean} returns.isConnected - WebSocket connection status
+ * @returns {string|null} returns.error - Error message if any
+ *
+ * @example
+ * ```tsx
+ * const { price, history, isConnected, error } = useBinanceTicker("btcusdt", 120);
+ * ```
+ */
 export const useBinanceTicker = (
   symbol: string = "btcusdt",
   maxPoints: number = 120
@@ -20,7 +38,12 @@ export const useBinanceTicker = (
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const mockIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Get initial price from REST API
+  /**
+   * Fetches the initial price from Binance REST API
+   * Falls back to a default price if the API call fails
+   *
+   * @returns {Promise<number>} Initial price value
+   */
   const getInitialPrice = async () => {
     try {
       const response = await fetch(
@@ -39,7 +62,12 @@ export const useBinanceTicker = (
     }
   };
 
-  // Mock data generator
+  /**
+   * Generates and updates mock price data
+   * Used as a fallback when the WebSocket connection fails
+   *
+   * @param {number} initialPrice - Starting price for mock data
+   */
   const startMockData = (initialPrice: number) => {
     let mockPrice = initialPrice;
     let mockTime = Date.now();
@@ -105,6 +133,21 @@ export const useBinanceTicker = (
   return { price, history, isConnected, error };
 };
 
+/**
+ * Custom hook for managing trades and market data
+ * Provides functionality for adding trades and updating market statistics
+ *
+ * @returns {Object} Trades and market data management functions
+ * @returns {ITradeHistory[]} returns.trades - List of recent trades
+ * @returns {IMarketData} returns.marketData - Current market statistics
+ * @returns {Function} returns.addTrade - Function to add a new trade
+ * @returns {Function} returns.updateMarketData - Function to update market data
+ *
+ * @example
+ * ```tsx
+ * const { trades, marketData, addTrade, updateMarketData } = useTrades();
+ * ```
+ */
 export const useTrades = () => {
   const [trades, setTrades] = useState<ITradeHistory[]>([]);
   const [marketData, setMarketData] = useState<IMarketData>({
@@ -114,7 +157,12 @@ export const useTrades = () => {
     low24h: 48920,
   });
 
-  // Generate random trade
+  /**
+   * Generates a random trade with realistic values
+   *
+   * @param {number} price - Current price for the trade
+   * @returns {ITradeHistory} Generated trade object
+   */
   const generateTrade = useCallback((price: number): ITradeHistory => {
     const type = Math.random() > 0.5 ? "Buy" : "Sell";
     const amount = Number((Math.random() * 0.5).toFixed(4));
@@ -132,7 +180,12 @@ export const useTrades = () => {
     };
   }, []);
 
-  // Add a new trade
+  /**
+   * Adds a new trade to the history
+   * Maintains a maximum of 10 recent trades
+   *
+   * @param {number} price - Price of the new trade
+   */
   const addTrade = useCallback(
     (price: number) => {
       const newTrade = generateTrade(price);
@@ -141,7 +194,12 @@ export const useTrades = () => {
     [generateTrade]
   );
 
-  // Update market data
+  /**
+   * Updates market data based on new price
+   * Only updates if the price change is significant (>0.1%)
+   *
+   * @param {number} price - New price to update market data with
+   */
   const updateMarketData = useCallback((price: number) => {
     setMarketData((prev) => {
       // Only update if the price is significantly different

@@ -5,18 +5,42 @@ import { useCallback, useEffect, useState } from "react";
 import ChartPanel from "@/features/home/components/chart-panel";
 import { useTrades } from "@/features/home/core/hooks";
 
+/**
+ * Home component serves as the main trading dashboard interface.
+ * Features include:
+ * - Real-time price chart with live updates
+ * - Market overview with key statistics
+ * - Order placement interface
+ * - Recent trades table
+ *
+ * The component integrates with the Binance WebSocket API for live price updates
+ * and maintains local state for trades and market data.
+ *
+ * @example
+ * ```tsx
+ * <Home />
+ * ```
+ */
 const Home = () => {
   const { trades, marketData, addTrade, updateMarketData } = useTrades();
   const [orderAmount, setOrderAmount] = useState("");
   const [orderPrice, setOrderPrice] = useState("");
   const [currentPrice, setCurrentPrice] = useState<number | null>(null);
 
-  // Memoize the price update handler
+  /**
+   * Handles price updates from the chart component
+   * Updates the current price state and triggers market data updates
+   *
+   * @param {number} price - The new price value
+   */
   const handlePriceUpdate = useCallback((price: number) => {
     setCurrentPrice(price);
   }, []);
 
-  // Update market data when price changes, but only if it's different
+  /**
+   * Updates market data when price changes
+   * Only updates if the new price is different from current high/low
+   */
   useEffect(() => {
     if (
       currentPrice &&
@@ -27,6 +51,12 @@ const Home = () => {
     }
   }, [currentPrice, marketData.high24h, marketData.low24h, updateMarketData]);
 
+  /**
+   * Handles order placement
+   * Validates input and adds the trade to the local state
+   *
+   * @param {"Buy" | "Sell"} type - The type of order to place
+   */
   const handlePlaceOrder = (type: "Buy" | "Sell") => {
     if (!currentPrice || !orderAmount || !orderPrice) return;
 
@@ -41,6 +71,16 @@ const Home = () => {
     setOrderPrice("");
   };
 
+  /**
+   * Formats numbers into human-readable currency strings
+   * Handles billions and millions with appropriate suffixes
+   *
+   * @param {number} num - The number to format
+   * @returns {string} Formatted currency string
+   * @example
+   * formatNumber(1500000) // "$1.5M"
+   * formatNumber(2500000000) // "$2.5B"
+   */
   const formatNumber = (num: number) => {
     if (num >= 1e9) return `$${(num / 1e9).toFixed(1)}B`;
     if (num >= 1e6) return `$${(num / 1e6).toFixed(1)}M`;
