@@ -132,7 +132,7 @@ const ChartContainer = ({
           .tickSize(-innerWidth)
           .tickFormat((d) => d3.format(",.2f")(d as number))
           .ticks(yTicks)
-          .tickPadding(8) as any
+          .tickPadding(8)
       )
       .call((g) => {
         g.selectAll("line")
@@ -159,7 +159,7 @@ const ChartContainer = ({
           .axisBottom(xScale.current)
           .tickSize(-innerHeight)
           .ticks(xTicks)
-          .tickPadding(8) as any
+          .tickPadding(8)
       )
       .call((g) => {
         g.selectAll("line")
@@ -254,7 +254,7 @@ const ChartContainer = ({
     xScale.current.range([0, innerWidth]);
     yScale.current.range([innerHeight, 0]);
 
-    xAxisG.current.call(d3.axisBottom(xScale.current) as any);
+    xAxisG.current.call(d3.axisBottom(xScale.current));
 
     group.selectAll(".price-card").remove();
     const priceCard = group

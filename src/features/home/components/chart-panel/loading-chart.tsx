@@ -33,17 +33,6 @@ const LoadingChart = () => {
   }, []);
 
   /**
-   * Main pulse animation for the background
-   * Creates a subtle breathing effect
-   */
-  const pulseAnimation = useSpring({
-    from: { opacity: 0.3 },
-    to: { opacity: 0.7 },
-    loop: { reverse: true },
-    config: { duration: 1500 },
-  });
-
-  /**
    * Wave animation for the loading indicator
    * Creates a smooth horizontal movement
    */
