@@ -100,7 +100,7 @@ const LoadingChart = () => {
         x: Math.random() * 100,
         y: Math.random() * 100,
       },
-      enter: (item, i) => async (next) => {
+      enter: () => async (next) => {
         await next({
           opacity: 0.8,
           transform: "translateY(-20px) scale(1)",
@@ -116,17 +116,6 @@ const LoadingChart = () => {
       config: { tension: 280, friction: 60 },
     }
   );
-
-  /**
-   * Glowing effect animation
-   * Adds a subtle pulsing glow to elements
-   */
-  const glowAnimation = useSpring({
-    from: { boxShadow: "0 0 5px rgba(59, 130, 246, 0.5)" },
-    to: { boxShadow: "0 0 20px rgba(59, 130, 246, 0.8)" },
-    loop: { reverse: true },
-    config: { duration: 2000 },
-  });
 
   return (
     <div className="size-full flex items-center justify-center relative overflow-hidden">
@@ -145,7 +134,6 @@ const LoadingChart = () => {
           />
         ))}
       </div>
-
       {/* Main chart area with enhanced styling */}
       <div className="absolute inset-0 flex flex-col">
         {/* Candlesticks with enhanced gradients */}
@@ -158,7 +146,6 @@ const LoadingChart = () => {
             />
           ))}
         </div>
-
         {/* Volume bars with enhanced styling */}
         <div className="h-20 flex items-end justify-around px-4 pb-4">
           {volumeBars.map((props, i) => (
@@ -170,7 +157,6 @@ const LoadingChart = () => {
           ))}
         </div>
       </div>
-
       {/* Enhanced loading indicator */}
       <div className="absolute inset-0 flex items-center justify-center">
         <div className="flex flex-col items-center space-y-6">
@@ -189,25 +175,21 @@ const LoadingChart = () => {
           </div>
         </div>
       </div>
-
       {/* Enhanced decorative elements */}
       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-blue-500/30 to-transparent" />
       <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-blue-500/30 to-transparent" />
-
       {/* Corner accents with enhanced glow */}
       <div className="absolute top-0 left-0 w-16 h-16 border-t-2 border-l-2 border-blue-500/30 shadow-[0_0_15px_rgba(59,130,246,0.3)]" />
       <div className="absolute top-0 right-0 w-16 h-16 border-t-2 border-r-2 border-blue-500/30 shadow-[0_0_15px_rgba(59,130,246,0.3)]" />
       <div className="absolute bottom-0 left-0 w-16 h-16 border-b-2 border-l-2 border-blue-500/30 shadow-[0_0_15px_rgba(59,130,246,0.3)]" />
       <div className="absolute bottom-0 right-0 w-16 h-16 border-b-2 border-r-2 border-blue-500/30 shadow-[0_0_15px_rgba(59,130,246,0.3)]" />
-
       {/* Additional decorative elements with enhanced gradients */}
       <div className="absolute top-1/2 left-0 w-1/3 h-px bg-gradient-to-r from-transparent via-blue-500/20 to-transparent" />
       <div className="absolute top-1/2 right-0 w-1/3 h-px bg-gradient-to-r from-transparent via-blue-500/20 to-transparent" />
       <div className="absolute top-1/3 left-0 w-1/4 h-px bg-gradient-to-r from-transparent via-blue-500/10 to-transparent" />
-      <div className="absolute top-2/3 right-0 w-1/4 h-px bg-gradient-to-r from-transparent via-blue-500/10 to-transparent" />
 
       {/* Floating particles */}
-      {particles((style, item, _, i) => (
+      {particles((style, _, __, i) => (
         <animated.div
           key={i}
           style={{

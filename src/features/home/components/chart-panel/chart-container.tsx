@@ -1,13 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import * as d3 from "d3";
 
-import type { IChartData } from "@/features/home/core/types";
-
 interface IChartContainerProps {
   width: number;
   height: number;
   dataPoint: number | null;
-  margin?: { top: number; right: number; bottom: number; left: number };
   visibleCount?: number;
   yPadding?: number;
 }
@@ -18,12 +15,12 @@ interface IChartContainerProps {
  * - Smooth drawing-like animations
  * - Real-time price updates
  * - Responsive scaling
+ * - Live price card that moves with the chart's latest data point
  */
 const ChartContainer = ({
   width: initialWidth,
   height: initialHeight,
   dataPoint,
-  margin = { top: 20, right: 100, bottom: 20, left: 40 },
   visibleCount = 40,
   yPadding = 0.1,
 }: IChartContainerProps) => {
@@ -40,6 +37,7 @@ const ChartContainer = ({
   const xScale = useRef<d3.ScaleLinear<number, number>>(d3.scaleLinear());
   const yScale = useRef<d3.ScaleLinear<number, number>>(d3.scaleLinear());
   const lineGenerator = useRef<d3.Line<number>>(d3.line<number>());
+  const priceCardRef = useRef<SVGGElement>(null);
 
   const yAxisG = useRef<d3.Selection<
     SVGGElement,
@@ -179,6 +177,29 @@ const ChartContainer = ({
       });
   }, [dimensions.height, dimensions.width]);
 
+  const updatePriceCard = useCallback(() => {
+    if (!priceCardRef.current || dataPoint === null) return;
+
+    const priceCard = d3.select(priceCardRef.current);
+    const yPos = yScale.current(dataPoint);
+
+    // Update price text
+    priceCard
+      .select("text")
+      .text(`$${d3.format(",.2f")(dataPoint)}`)
+      .attr("fill", "url(#lineGradient)")
+      .style("font-size", `${fontSize * 1.2}px`)
+      .style("font-weight", "600")
+      .style("text-shadow", "0 0 10px rgba(255,255,255,0.2)");
+
+    // Update position with smooth transition
+    priceCard
+      .transition()
+      .duration(500)
+      .ease(d3.easeLinear)
+      .attr("transform", `translate(${innerWidth - 90}, ${yPos})`);
+  }, [dataPoint, innerWidth, fontSize]);
+
   const runAnimationCycle = useCallback(() => {
     if (dataQueue.current.length === 0) {
       isAnimating.current = false;
@@ -193,6 +214,7 @@ const ChartContainer = ({
 
     updateScales(newData);
     updateAxes();
+    updatePriceCard();
 
     const pathSelection = d3.select(pathRef.current);
 
@@ -214,7 +236,7 @@ const ChartContainer = ({
           .attr("transform", null);
         runAnimationCycle();
       });
-  }, [updateScales, updateAxes]);
+  }, [updateScales, updateAxes, updatePriceCard]);
 
   useEffect(() => {
     if (dimensions.width <= 0 || dimensions.height <= 0 || !GRef.current)
@@ -233,6 +255,32 @@ const ChartContainer = ({
     yScale.current.range([innerHeight, 0]);
 
     xAxisG.current.call(d3.axisBottom(xScale.current) as any);
+
+    group.selectAll(".price-card").remove();
+    const priceCard = group
+      .append("g")
+      .attr("class", "price-card")
+      .attr("transform", `translate(${innerWidth + 30}, 0)`);
+    priceCard
+      .append("rect")
+      .attr("width", Math.max(60, dimensions.width * 0.08))
+      .attr("height", Math.max(20, dimensions.height * 0.05))
+      .attr("rx", 6)
+      .attr("fill", "rgba(15, 23, 42, 0.8)")
+      .attr("stroke", "rgba(59, 130, 246, 0.3)")
+      .attr("stroke-width", "1")
+      .style("filter", "drop-shadow(0 0 10px rgba(59, 130, 246, 0.2))");
+    priceCard
+      .append("text")
+      .attr("x", Math.max(30, dimensions.width * 0.04))
+      .attr("y", Math.max(14, dimensions.height * 0.035))
+      .attr("text-anchor", "middle")
+      .attr("fill", "url(#lineGradient)")
+      .style("font-size", `${fontSize * 1.2}px`)
+      .style("font-family", "system-ui, -apple-system, sans-serif")
+      .style("font-weight", "600")
+      .style("text-shadow", "0 0 10px rgba(255,255,255,0.2)");
+    priceCardRef.current = priceCard.node();
   }, [dimensions.width, dimensions.height, innerWidth, innerHeight]);
 
   useEffect(() => {
@@ -242,6 +290,7 @@ const ChartContainer = ({
       const initialData = Array(visibleCount).fill(dataPoint);
       updateScales(initialData);
       updateAxes();
+      updatePriceCard();
       d3.select(pathRef.current)
         .datum(initialData)
         .attr("d", lineGenerator.current);
@@ -256,7 +305,14 @@ const ChartContainer = ({
         runAnimationCycle();
       }
     }
-  }, [dataPoint, runAnimationCycle, visibleCount, updateScales, updateAxes]);
+  }, [
+    dataPoint,
+    runAnimationCycle,
+    visibleCount,
+    updateScales,
+    updateAxes,
+    updatePriceCard,
+  ]);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -312,19 +368,16 @@ const ChartContainer = ({
             <stop offset="50%" stopColor="#8b5cf6" stopOpacity="0.9" />
             <stop offset="100%" stopColor="#ec4899" stopOpacity="0.9" />
           </linearGradient>
-
           {/* Area gradient */}
           <linearGradient id="areaGradient" x1="0%" y1="0%" x2="0%" y2="100%">
             <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.2" />
             <stop offset="100%" stopColor="#3b82f6" stopOpacity="0" />
           </linearGradient>
-
           {/* Glow effect */}
           <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
             <feGaussianBlur stdDeviation="3" result="blur" />
             <feComposite in="SourceGraphic" in2="blur" operator="over" />
           </filter>
-
           {/* Grid pattern */}
           <pattern
             id="grid"
@@ -340,7 +393,6 @@ const ChartContainer = ({
             />
           </pattern>
         </defs>
-
         <g
           ref={GRef}
           transform={`translate(${responsiveMargin.left},${responsiveMargin.top})`}
@@ -353,13 +405,11 @@ const ChartContainer = ({
             fill="url(#grid)"
             className="transition-opacity duration-300"
           />
-
           <defs>
             <clipPath id="clip">
               <rect width={innerWidth} height={innerHeight}></rect>
             </clipPath>
           </defs>
-
           <g clipPath="url(#clip)">
             {/* Area fill */}
             <path
@@ -369,7 +419,6 @@ const ChartContainer = ({
               opacity="0.4"
               className="transition-all duration-300"
             />
-
             {/* Main line */}
             <path
               ref={pathRef}
@@ -381,7 +430,6 @@ const ChartContainer = ({
               filter="url(#glow)"
               className="transition-all duration-300"
             />
-
             {/* Interactive highlight circle */}
             <circle
               r={circleRadius}

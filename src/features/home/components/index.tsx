@@ -57,7 +57,7 @@ const Home = () => {
    *
    * @param {"Buy" | "Sell"} type - The type of order to place
    */
-  const handlePlaceOrder = (type: "Buy" | "Sell") => {
+  const handlePlaceOrder = () => {
     if (!currentPrice || !orderAmount || !orderPrice) return;
 
     const amount = parseFloat(orderAmount);
@@ -172,13 +172,13 @@ const Home = () => {
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <button
-                    onClick={() => handlePlaceOrder("Buy")}
+                    onClick={() => handlePlaceOrder()}
                     className="w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-500 transition-colors"
                   >
                     Buy
                   </button>
                   <button
-                    onClick={() => handlePlaceOrder("Sell")}
+                    onClick={() => handlePlaceOrder()}
                     className="w-full px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-500 transition-colors"
                   >
                     Sell
