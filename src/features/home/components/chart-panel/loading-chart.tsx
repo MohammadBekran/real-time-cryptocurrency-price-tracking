@@ -99,7 +99,10 @@ const LoadingChart = () => {
   });
 
   return (
-    <div className="size-full flex items-center justify-center relative overflow-hidden">
+    <div
+      className="size-full flex items-center justify-center relative overflow-hidden"
+      data-testid="loading-chart"
+    >
       {/* Background with enhanced gradient */}
       <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.1),transparent_70%)]" />

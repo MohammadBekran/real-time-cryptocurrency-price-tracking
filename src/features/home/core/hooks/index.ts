@@ -289,7 +289,6 @@ export function useD3LineChart({
     );
     if (existingDots.empty()) {
       // Create new dots if they don't exist
-      // Outer colored halo
       group
         .append('circle')
         .attr('class', 'shiny-dot-halo2')
