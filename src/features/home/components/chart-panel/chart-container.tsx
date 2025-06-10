@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import * as d3 from 'd3';
 
+import { useD3LineChart, useChartBuilder } from '@/features/home/core/hooks';
+
 interface IChartContainerProps {
   width: number;
   height: number;
@@ -29,15 +31,12 @@ const ChartContainer = ({
     width: initialWidth,
     height: initialHeight,
   });
-  const GRef = useRef<SVGGElement>(null);
-  const pathRef = useRef<SVGPathElement>(null);
-  const dataQueue = useRef<number[]>([]);
-  const isAnimating = useRef(false);
-  const isInitialized = useRef(false);
+  const GRef = useRef<SVGGElement>(null!);
+  const pathRef = useRef<SVGPathElement>(null!);
   const xScale = useRef<d3.ScaleLinear<number, number>>(d3.scaleLinear());
   const yScale = useRef<d3.ScaleLinear<number, number>>(d3.scaleLinear());
   const lineGenerator = useRef<d3.Line<number>>(d3.line<number>());
-  const priceCardRef = useRef<SVGGElement>(null);
+  const priceCardRef = useRef<SVGGElement>(null!);
 
   const yAxisG = useRef<d3.Selection<SVGGElement, unknown, null, undefined> | null>(null);
   const xAxisG = useRef<d3.Selection<SVGGElement, unknown, null, undefined> | null>(null);
@@ -150,7 +149,7 @@ const ChartContainer = ({
           .style('text-shadow', '0 0 10px rgba(255,255,255,0.1)');
         g.select('.domain').attr('stroke', 'rgba(255, 255, 255, 0.15)').attr('stroke-width', '1.5');
       });
-  }, [dimensions.height, dimensions.width]);
+  }, [dimensions.height, dimensions.width, innerWidth, innerHeight, fontSize]);
 
   const updatePriceCard = useCallback(() => {
     if (!priceCardRef.current || dataPoint === null) return;
@@ -206,75 +205,44 @@ const ChartContainer = ({
           .datum(dataAfterShift)
           .attr('d', lineGenerator.current)
           .attr('transform', null);
+        setChartData(dataAfterShift);
         runAnimationCycle();
       });
   }, [updateScales, updateAxes, updatePriceCard]);
 
-  useEffect(() => {
-    if (dimensions.width <= 0 || dimensions.height <= 0 || !GRef.current) return;
+  const { chartData, setChartData, dataQueue, isAnimating } = useChartBuilder({
+    GRef,
+    pathRef,
+    priceCardRef,
+    xAxisG,
+    yAxisG,
+    xScale,
+    yScale,
+    lineGenerator,
+    dimensions,
+    innerWidth,
+    innerHeight,
+    fontSize,
+    strokeWidth,
+    circleRadius,
+    dataPoint,
+    visibleCount,
+    updateScales,
+    updateAxes,
+    updatePriceCard,
+    runAnimationCycle,
+  });
 
-    const group = d3.select(GRef.current);
-    group.selectAll('.axis').remove();
-
-    yAxisG.current = group.append('g').attr('class', 'axis axis--y');
-    xAxisG.current = group
-      .append('g')
-      .attr('class', 'axis axis--x')
-      .attr('transform', `translate(0,${innerHeight})`);
-
-    xScale.current.range([0, innerWidth]);
-    yScale.current.range([innerHeight, 0]);
-
-    xAxisG.current.call(d3.axisBottom(xScale.current));
-
-    group.selectAll('.price-card').remove();
-    const priceCard = group
-      .append('g')
-      .attr('class', 'price-card')
-      .attr('transform', `translate(${innerWidth + 30}, 0)`);
-    priceCard
-      .append('rect')
-      .attr('width', Math.max(60, dimensions.width * 0.08))
-      .attr('height', Math.max(20, dimensions.height * 0.05))
-      .attr('rx', 6)
-      .attr('fill', 'rgba(15, 23, 42, 0.8)')
-      .attr('stroke', 'rgba(59, 130, 246, 0.3)')
-      .attr('stroke-width', '1')
-      .style('filter', 'drop-shadow(0 0 10px rgba(59, 130, 246, 0.2))');
-    priceCard
-      .append('text')
-      .attr('x', Math.max(30, dimensions.width * 0.04))
-      .attr('y', Math.max(14, dimensions.height * 0.035))
-      .attr('text-anchor', 'middle')
-      .attr('fill', 'url(#lineGradient)')
-      .style('font-size', `${fontSize * 1.2}px`)
-      .style('font-family', 'system-ui, -apple-system, sans-serif')
-      .style('font-weight', '600')
-      .style('text-shadow', '0 0 10px rgba(255,255,255,0.2)');
-    priceCardRef.current = priceCard.node();
-  }, [dimensions.width, dimensions.height, innerWidth, innerHeight]);
-
-  useEffect(() => {
-    if (dataPoint === null) return;
-
-    if (!isInitialized.current) {
-      const initialData = Array(visibleCount).fill(dataPoint);
-      updateScales(initialData);
-      updateAxes();
-      updatePriceCard();
-      d3.select(pathRef.current).datum(initialData).attr('d', lineGenerator.current);
-
-      isInitialized.current = true;
-      if (dataQueue.current.length > 0) {
-        runAnimationCycle();
-      }
-    } else {
-      dataQueue.current.push(dataPoint);
-      if (!isAnimating.current) {
-        runAnimationCycle();
-      }
-    }
-  }, [dataPoint, runAnimationCycle, visibleCount, updateScales, updateAxes, updatePriceCard]);
+  useD3LineChart({
+    gRef: GRef,
+    pathRef,
+    data: chartData,
+    xScale,
+    yScale,
+    lineGenerator,
+    circleRadius,
+    strokeWidth,
+  });
 
   useEffect(() => {
     if (!containerRef.current) return;

@@ -1,177 +1,302 @@
 /**
- * Props interface for the ChartPanel component
+ * Core type definitions for the trading chart feature
+ * Defines interfaces for chart components, data structures, and D3.js integrations
+ */
+
+/**
+ * ChartPanel component props
+ * Controls the behavior and appearance of the main chart panel
  */
 export interface IChartPanelProps {
-  /** Trading pair symbol (e.g., "btcusdt") */
+  /** Trading pair symbol in lowercase (e.g., "btcusdt") */
   symbol?: string;
-  /** Maximum number of data points to display */
+  /** Maximum number of data points to display in the chart */
   maxPoints?: number;
-  /** Callback function for price updates */
+  /** Callback triggered when price updates occur */
   onPriceUpdate?: (price: number) => void;
 }
 
 /**
- * Interface for chart data points
+ * Represents a single data point in the price chart
+ * Used for both real-time and historical price data
  */
 export interface IChartData {
   /** Unix timestamp in milliseconds */
   time: number;
-  /** Price value */
+  /** Current price value at the given timestamp */
   price: number;
 }
 
 /**
- * Type definition for D3 time format function
+ * D3 time format function type
+ * Used for formatting timestamps in the chart axes and tooltips
  */
 export interface ID3TimeFormat {
   (domainValue: Date | d3.NumberValue, index: number): string;
 }
 
 /**
- * Interface for individual trade data
+ * Individual trade data structure
+ * Represents a single trade execution in the market
  */
 export interface ITrade {
-  /** Trade price */
+  /** Execution price of the trade */
   price: number;
-  /** Trade quantity */
+  /** Volume of the trade */
   quantity: number;
-  /** Unix timestamp in milliseconds */
+  /** Unix timestamp of trade execution */
   time: number;
 }
 
 /**
- * Interface for trade history entries
+ * Trade history entry with formatted data
+ * Used for displaying trade information in the UI
  */
 export interface ITradeHistory {
-  /** Unique identifier for the trade */
+  /** Unique identifier for the trade record */
   id: string;
-  /** Formatted time string */
+  /** Human-readable time string */
   time: string;
-  /** Type of trade */
+  /** Trade direction */
   type: 'Buy' | 'Sell';
-  /** Trade price */
+  /** Execution price */
   price: number;
-  /** Trade amount */
+  /** Trade volume */
   amount: number;
-  /** Total value of the trade */
+  /** Total value (price * amount) */
   total: number;
 }
 
-export interface IChartData {
-  price: number;
-  time: number;
-}
-
 /**
- * Interface for chart dimensions and margins
+ * Chart dimensions and layout configuration
+ * Defines the spatial properties of the chart
  */
 export interface IChartDimensions {
-  /** Chart width in pixels */
+  /** Total width of the chart container */
   width: number;
-  /** Chart height in pixels */
+  /** Total height of the chart container */
   height: number;
-  /** Chart margins */
+  /** Spacing around the chart content */
   margin: IChartMargin;
 }
 
 /**
- * Interface for chart margins
+ * Chart margin configuration
+ * Controls the spacing between chart content and container edges
  */
 export interface IChartMargin {
-  /** Top margin in pixels */
+  /** Space above the chart content */
   top: number;
-  /** Right margin in pixels */
+  /** Space to the right of the chart content */
   right: number;
-  /** Bottom margin in pixels */
+  /** Space below the chart content */
   bottom: number;
-  /** Left margin in pixels */
+  /** Space to the left of the chart content */
   left: number;
 }
 
 /**
- * Interface for D3 chart scales
+ * D3 scale configurations
+ * Defines the mapping between data and visual coordinates
  */
 export interface IChartScales {
-  /** X-axis time scale */
+  /** Time-based scale for x-axis */
   x: d3.ScaleTime<number, number>;
-  /** Y-axis linear scale */
+  /** Linear scale for y-axis */
   y: d3.ScaleLinear<number, number>;
 }
 
 /**
- * Interface for D3 chart generators
+ * D3 path generators
+ * Creates SVG paths for chart elements
  */
 export interface IChartGenerators {
-  /** Line generator for price line */
+  /** Generator for the price line path */
   line: d3.Line<IChartData>;
-  /** Area generator for price area */
+  /** Generator for the area fill path */
   area: d3.Area<IChartData>;
 }
 
 /**
- * Interface for D3 chart SVG elements
+ * D3 SVG element selections
+ * References to chart DOM elements
  */
 export interface IChartElements {
-  /** Main SVG element */
+  /** Root SVG element */
   svg: d3.Selection<SVGSVGElement, unknown, null, undefined>;
-  /** X-axis group element */
+  /** X-axis container */
   xAxisGroup: d3.Selection<SVGGElement, unknown, null, undefined>;
-  /** Y-axis group element */
+  /** Y-axis container */
   yAxisGroup: d3.Selection<SVGGElement, unknown, null, undefined>;
-  /** Line path group element */
+  /** Price line container */
   lineGroup: d3.Selection<SVGGElement, unknown, null, undefined>;
-  /** Area path group element */
+  /** Area fill container */
   areaGroup: d3.Selection<SVGGElement, unknown, null, undefined>;
-  /** Data point dots group element */
+  /** Data points container */
   dotGroup: d3.Selection<SVGGElement, unknown, null, undefined>;
-  /** Tooltip group element */
+  /** Tooltip container */
   tooltipGroup: d3.Selection<SVGGElement, unknown, null, undefined>;
 }
 
 /**
- * Interface for chart state
+ * Chart state management
+ * Maintains the current state of chart elements and data
  */
 export interface IChartState {
-  /** Chart dimensions and margins */
+  /** Current chart dimensions */
   dimensions: IChartDimensions;
-  /** D3 scales */
+  /** Active D3 scales */
   scales: IChartScales;
-  /** D3 generators */
+  /** Active D3 generators */
   generators: IChartGenerators;
-  /** D3 SVG elements */
+  /** Active D3 element selections */
   elements: IChartElements;
 }
 
 /**
- * Props interface for the Chart component
+ * Chart component props
+ * Controls the chart's data and behavior
  */
 export interface IChartProps {
-  /** Array of price data points */
+  /** Array of price data points to display */
   data: IChartData[];
-  /** Callback function for price updates */
+  /** Callback for price update events */
   onPriceUpdate: (price: number) => void;
 }
 
 /**
- * Interface for price point data
+ * Price point data structure
+ * Represents a single price update
  */
 export interface IPricePoint {
-  /** Unix timestamp in milliseconds */
+  /** Unix timestamp of the price update */
   time: number;
-  /** Price value */
+  /** Updated price value */
   price: number;
 }
 
 /**
- * Interface for market data statistics
+ * Market statistics
+ * Contains key market metrics and indicators
  */
 export interface IMarketData {
-  /** 24-hour trading volume */
+  /** 24-hour trading volume in base currency */
   volume24h: number;
-  /** Market capitalization */
+  /** Total market capitalization */
   marketCap: number;
-  /** 24-hour high price */
+  /** Highest price in the last 24 hours */
   high24h: number;
-  /** 24-hour low price */
+  /** Lowest price in the last 24 hours */
   low24h: number;
+}
+
+/**
+ * D3 line chart configuration
+ * Parameters for the line chart visualization
+ */
+export interface ID3LineChartParams {
+  /** Main chart group reference */
+  gRef: React.RefObject<SVGGElement | null>;
+  /** Line path reference */
+  pathRef: React.RefObject<SVGPathElement | null>;
+  /** Data points array */
+  data: number[];
+  /** X-axis scale reference */
+  xScale: React.RefObject<d3.ScaleLinear<number, number>>;
+  /** Y-axis scale reference */
+  yScale: React.RefObject<d3.ScaleLinear<number, number>>;
+  /** Line generator reference */
+  lineGenerator: React.RefObject<d3.Line<number>>;
+  /** Interactive dot radius */
+  circleRadius: number;
+  /** Line and dot stroke width */
+  strokeWidth: number;
+}
+
+/**
+ * Chart builder hook parameters
+ * Configuration for chart initialization and updates
+ */
+export interface IChartBuilderParams {
+  /** Main chart group reference */
+  GRef: React.RefObject<SVGGElement>;
+  /** Line path reference */
+  pathRef: React.RefObject<SVGPathElement>;
+  /** Price card reference */
+  priceCardRef: React.RefObject<SVGGElement>;
+  /** X-axis group reference */
+  xAxisG: React.RefObject<d3.Selection<SVGGElement, unknown, null, undefined> | null>;
+  /** Y-axis group reference */
+  yAxisG: React.RefObject<d3.Selection<SVGGElement, unknown, null, undefined> | null>;
+  /** X-axis scale reference */
+  xScale: React.RefObject<d3.ScaleLinear<number, number>>;
+  /** Y-axis scale reference */
+  yScale: React.RefObject<d3.ScaleLinear<number, number>>;
+  /** Line generator reference */
+  lineGenerator: React.RefObject<d3.Line<number>>;
+  /** Chart dimensions */
+  dimensions: { width: number; height: number };
+  /** Chart content width */
+  innerWidth: number;
+  /** Chart content height */
+  innerHeight: number;
+  /** Text size */
+  fontSize: number;
+  /** Line thickness */
+  strokeWidth: number;
+  /** Interactive dot size */
+  circleRadius: number;
+  /** Current price value */
+  dataPoint: number | null;
+  /** Visible data points count */
+  visibleCount: number;
+  /** Scale update handler */
+  updateScales: (data: number[]) => void;
+  /** Axis update handler */
+  updateAxes: () => void;
+  /** Price card update handler */
+  updatePriceCard: () => void;
+  /** Animation cycle handler */
+  runAnimationCycle: () => void;
+}
+
+/**
+ * Binance ticker hook parameters
+ * Configuration for real-time price updates
+ */
+export interface IBinanceTickerParams {
+  /** Trading pair symbol */
+  symbol?: string;
+  /** Historical data limit */
+  maxPoints?: number;
+}
+
+/**
+ * Binance ticker hook result
+ * Real-time price data and connection status
+ */
+export interface IBinanceTickerResult {
+  /** Current market price */
+  price: number | null;
+  /** Price history array */
+  history: IPricePoint[];
+  /** WebSocket connection status */
+  isConnected: boolean;
+  /** Error state */
+  error: string | null;
+}
+
+/**
+ * Trades hook result
+ * Trade history and market data management
+ */
+export interface ITradesResult {
+  /** Recent trades array */
+  trades: ITradeHistory[];
+  /** Current market statistics */
+  marketData: IMarketData;
+  /** Trade addition handler */
+  addTrade: (price: number) => void;
+  /** Market data update handler */
+  updateMarketData: (price: number) => void;
 }
