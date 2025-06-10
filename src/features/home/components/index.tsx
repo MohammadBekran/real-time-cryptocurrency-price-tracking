@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from 'react';
 
-import ChartPanel from "@/features/home/components/chart-panel";
-import { useTrades } from "@/features/home/core/hooks";
+import ChartPanel from '@/features/home/components/chart-panel';
+import { useTrades } from '@/features/home/core/hooks';
 
 /**
  * Home component serves as the main trading dashboard interface.
@@ -23,8 +23,8 @@ import { useTrades } from "@/features/home/core/hooks";
  */
 const Home = () => {
   const { trades, marketData, addTrade, updateMarketData } = useTrades();
-  const [orderAmount, setOrderAmount] = useState("");
-  const [orderPrice, setOrderPrice] = useState("");
+  const [orderAmount, setOrderAmount] = useState('');
+  const [orderPrice, setOrderPrice] = useState('');
   const [currentPrice, setCurrentPrice] = useState<number | null>(null);
 
   /**
@@ -42,11 +42,7 @@ const Home = () => {
    * Only updates if the new price is different from current high/low
    */
   useEffect(() => {
-    if (
-      currentPrice &&
-      currentPrice !== marketData.high24h &&
-      currentPrice !== marketData.low24h
-    ) {
+    if (currentPrice && currentPrice !== marketData.high24h && currentPrice !== marketData.low24h) {
       updateMarketData(currentPrice);
     }
   }, [currentPrice, marketData.high24h, marketData.low24h, updateMarketData]);
@@ -67,8 +63,8 @@ const Home = () => {
 
     // In a real app, this would place an order on the exchange
     addTrade(price);
-    setOrderAmount("");
-    setOrderPrice("");
+    setOrderAmount('');
+    setOrderPrice('');
   };
 
   /**
@@ -94,9 +90,7 @@ const Home = () => {
         <div className="flex justify-between items-center">
           <div>
             <h1 className="text-3xl font-bold text-white">Trading Dashboard</h1>
-            <p className="text-slate-400 mt-1">
-              Real-time cryptocurrency price tracking
-            </p>
+            <p className="text-slate-400 mt-1">Real-time cryptocurrency price tracking</p>
           </div>
         </div>
 
@@ -111,9 +105,7 @@ const Home = () => {
           <div className="space-y-6">
             {/* Market Overview */}
             <div className="bg-slate-900 rounded-xl p-6 shadow-xl">
-              <h2 className="text-xl font-bold text-white mb-4">
-                Market Overview
-              </h2>
+              <h2 className="text-xl font-bold text-white mb-4">Market Overview</h2>
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
                   <span className="text-slate-400">24h Volume</span>
@@ -129,15 +121,11 @@ const Home = () => {
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-slate-400">24h High</span>
-                  <span className="text-white font-medium">
-                    {formatNumber(marketData.high24h)}
-                  </span>
+                  <span className="text-white font-medium">{formatNumber(marketData.high24h)}</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-slate-400">24h Low</span>
-                  <span className="text-white font-medium">
-                    {formatNumber(marketData.low24h)}
-                  </span>
+                  <span className="text-white font-medium">{formatNumber(marketData.low24h)}</span>
                 </div>
               </div>
             </div>
@@ -147,9 +135,7 @@ const Home = () => {
               <h2 className="text-xl font-bold text-white mb-4">Place Order</h2>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-slate-400 mb-2">
-                    Amount
-                  </label>
+                  <label className="block text-sm font-medium text-slate-400 mb-2">Amount</label>
                   <input
                     type="number"
                     value={orderAmount}
@@ -159,9 +145,7 @@ const Home = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-400 mb-2">
-                    Price
-                  </label>
+                  <label className="block text-sm font-medium text-slate-400 mb-2">Price</label>
                   <input
                     type="number"
                     value={orderPrice}
@@ -210,9 +194,9 @@ const Home = () => {
                     <td className="py-3">
                       <span
                         className={`px-2 py-1 rounded-full text-xs font-medium ${
-                          trade.type === "Buy"
-                            ? "bg-green-500/20 text-green-500"
-                            : "bg-red-500/20 text-red-500"
+                          trade.type === 'Buy'
+                            ? 'bg-green-500/20 text-green-500'
+                            : 'bg-red-500/20 text-red-500'
                         }`}
                       >
                         {trade.type}

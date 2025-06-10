@@ -48,7 +48,7 @@ export interface ITradeHistory {
   /** Formatted time string */
   time: string;
   /** Type of trade */
-  type: "Buy" | "Sell";
+  type: 'Buy' | 'Sell';
   /** Trade price */
   price: number;
   /** Trade amount */

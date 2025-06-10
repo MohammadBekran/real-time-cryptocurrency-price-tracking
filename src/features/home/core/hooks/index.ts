@@ -1,12 +1,8 @@
-"use client";
+'use client';
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from 'react';
 
-import type {
-  IMarketData,
-  IPricePoint,
-  ITradeHistory,
-} from "@/features/home/core/types";
+import type { IMarketData, IPricePoint, ITradeHistory } from '@/features/home/core/types';
 
 /**
  * Custom hook for managing real-time price data from Binance
@@ -19,17 +15,14 @@ import type {
  * @returns {number|null} returns.price - Current price
  * @returns {IPricePoint[]} returns.history - Historical price data
  * @returns {boolean} returns.isConnected - WebSocket connection status
- * @returns {string|null} returns.error - Error message if any
+ * @returns {object} returns.error - Error message if any
  *
  * @example
  * ```tsx
  * const { price, history, isConnected, error } = useBinanceTicker("btcusdt", 120);
  * ```
  */
-export const useBinanceTicker = (
-  symbol: string = "btcusdt",
-  maxPoints: number = 120
-) => {
+export const useBinanceTicker = (symbol: string = 'btcusdt', maxPoints: number = 120) => {
   const [price, setPrice] = useState<number | null>(null);
   const [history, setHistory] = useState<IPricePoint[]>([]);
   const [isConnected, setIsConnected] = useState(false);
@@ -57,7 +50,7 @@ export const useBinanceTicker = (
 
       return initialPrice;
     } catch (err) {
-      console.error("Error fetching initial price:", err);
+      console.error('Error fetching initial price:', err);
       return 50000; // Fallback price
     }
   };
@@ -85,9 +78,7 @@ export const useBinanceTicker = (
       setPrice(mockPrice);
       setHistory((prev) => {
         const next = [...prev, { time: mockTime, price: mockPrice }];
-        return next.length > maxPoints
-          ? next.slice(next.length - maxPoints)
-          : next;
+        return next.length > maxPoints ? next.slice(next.length - maxPoints) : next;
       });
     }, 1000);
   };
@@ -105,9 +96,9 @@ export const useBinanceTicker = (
         startMockData(initialPrice);
         setIsConnected(true);
       } catch (err) {
-        console.error("Error initializing:", err);
+        console.error('Error initializing:', err);
         if (mounted) {
-          setError("Failed to initialize");
+          setError('Failed to initialize');
           // Start mock data with fallback price
           startMockData(50000);
         }
@@ -164,7 +155,7 @@ export const useTrades = () => {
    * @returns {ITradeHistory} Generated trade object
    */
   const generateTrade = useCallback((price: number): ITradeHistory => {
-    const type = Math.random() > 0.5 ? "Buy" : "Sell";
+    const type = Math.random() > 0.5 ? 'Buy' : 'Sell';
     const amount = Number((Math.random() * 0.5).toFixed(4));
     const total = Number((amount * price).toFixed(2));
     const now = new Date();
@@ -203,8 +194,7 @@ export const useTrades = () => {
   const updateMarketData = useCallback((price: number) => {
     setMarketData((prev) => {
       // Only update if the price is significantly different
-      const shouldUpdate =
-        price > prev.high24h * 1.001 || price < prev.low24h * 0.999;
+      const shouldUpdate = price > prev.high24h * 1.001 || price < prev.low24h * 0.999;
 
       if (!shouldUpdate) return prev;
 

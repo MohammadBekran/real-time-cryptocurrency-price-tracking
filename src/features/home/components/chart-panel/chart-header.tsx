@@ -1,4 +1,4 @@
-import { animated, SpringValue } from "@react-spring/web";
+import { animated, SpringValue } from '@react-spring/web';
 
 interface IChartHeaderProps {
   symbol: string;
@@ -40,18 +40,12 @@ const ChartHeader = ({
   return (
     <div className="flex justify-between items-center mb-6">
       <div className="flex items-center gap-4">
-        <h2 className="text-2xl font-bold text-white">
-          {symbol.toUpperCase()}
-        </h2>
+        <h2 className="text-2xl font-bold text-white">{symbol.toUpperCase()}</h2>
         <div className="flex items-center gap-2">
           <div
-            className={`w-2 h-2 rounded-full ${
-              isConnected ? "bg-green-500" : "bg-yellow-500"
-            }`}
+            className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-500' : 'bg-yellow-500'}`}
           />
-          <span className="text-sm text-slate-400">
-            {isConnected ? "Live" : "Demo Mode"}
-          </span>
+          <span className="text-sm text-slate-400">{isConnected ? 'Live' : 'Demo Mode'}</span>
         </div>
       </div>
       <div className="flex items-center gap-4 relative">
@@ -66,13 +60,11 @@ const ChartHeader = ({
         </animated.div>
         <div
           className={`px-3 py-1 rounded-full text-sm font-medium ${
-            priceChange >= 0
-              ? "bg-green-500/20 text-green-500"
-              : "bg-red-500/20 text-red-500"
+            priceChange >= 0 ? 'bg-green-500/20 text-green-500' : 'bg-red-500/20 text-red-500'
           }`}
         >
           <animated.span>
-            {priceChangeSpring.change.to((c: number) => (c >= 0 ? "+" : ""))}
+            {priceChangeSpring.change.to((c: number) => (c >= 0 ? '+' : ''))}
           </animated.span>
           <animated.span>
             {priceChangeSpring.change.to((c: number) => `${c.toFixed(2)}%`)}

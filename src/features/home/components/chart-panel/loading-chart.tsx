@@ -1,12 +1,7 @@
-"use client";
+'use client';
 
-import {
-  useSpring,
-  animated,
-  useTrail,
-  useTransition,
-} from "@react-spring/web";
-import { useEffect, useState } from "react";
+import { useSpring, animated, useTrail, useTransition } from '@react-spring/web';
+import { useEffect, useState } from 'react';
 
 /**
  * LoadingChart component provides an animated loading state for the trading chart.
@@ -37,8 +32,8 @@ const LoadingChart = () => {
    * Creates a smooth horizontal movement
    */
   const waveAnimation = useSpring({
-    from: { transform: "translateX(-100%)" },
-    to: { transform: "translateX(100%)" },
+    from: { transform: 'translateX(-100%)' },
+    to: { transform: 'translateX(100%)' },
     loop: true,
     config: { duration: 2000, tension: 280, friction: 60 },
   });
@@ -80,31 +75,28 @@ const LoadingChart = () => {
    * Floating particles animation
    * Creates a dynamic background effect with floating dots
    */
-  const particles = useTransition(
-    showParticles ? Array.from({ length: 40 }) : [],
-    {
-      from: {
-        opacity: 0,
-        transform: "translateY(0) scale(0)",
+  const particles = useTransition(showParticles ? Array.from({ length: 40 }) : [], {
+    from: {
+      opacity: 0,
+      transform: 'translateY(0) scale(0)',
+      x: Math.random() * 100,
+      y: Math.random() * 100,
+    },
+    enter: () => async (next) => {
+      await next({
+        opacity: 0.8,
+        transform: 'translateY(-20px) scale(1)',
         x: Math.random() * 100,
         y: Math.random() * 100,
-      },
-      enter: () => async (next) => {
-        await next({
-          opacity: 0.8,
-          transform: "translateY(-20px) scale(1)",
-          x: Math.random() * 100,
-          y: Math.random() * 100,
-          config: { duration: 1000 + Math.random() * 1000 },
-        });
-      },
-      leave: {
-        opacity: 0,
-        transform: "translateY(-40px) scale(0)",
-      },
-      config: { tension: 280, friction: 60 },
-    }
-  );
+        config: { duration: 1000 + Math.random() * 1000 },
+      });
+    },
+    leave: {
+      opacity: 0,
+      transform: 'translateY(-40px) scale(0)',
+    },
+    config: { tension: 280, friction: 60 },
+  });
 
   return (
     <div className="size-full flex items-center justify-center relative overflow-hidden">
@@ -183,11 +175,11 @@ const LoadingChart = () => {
           key={i}
           style={{
             ...style,
-            position: "absolute",
-            width: "4px",
-            height: "4px",
-            background: "rgba(59, 130, 246, 0.6)",
-            borderRadius: "50%",
+            position: 'absolute',
+            width: '4px',
+            height: '4px',
+            background: 'rgba(59, 130, 246, 0.6)',
+            borderRadius: '50%',
             left: `${style.x}%`,
             top: `${style.y}%`,
           }}

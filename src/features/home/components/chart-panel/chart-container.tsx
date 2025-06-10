@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import * as d3 from "d3";
+import { useCallback, useEffect, useRef, useState } from 'react';
+import * as d3 from 'd3';
 
 interface IChartContainerProps {
   width: number;
@@ -39,18 +39,8 @@ const ChartContainer = ({
   const lineGenerator = useRef<d3.Line<number>>(d3.line<number>());
   const priceCardRef = useRef<SVGGElement>(null);
 
-  const yAxisG = useRef<d3.Selection<
-    SVGGElement,
-    unknown,
-    null,
-    undefined
-  > | null>(null);
-  const xAxisG = useRef<d3.Selection<
-    SVGGElement,
-    unknown,
-    null,
-    undefined
-  > | null>(null);
+  const yAxisG = useRef<d3.Selection<SVGGElement, unknown, null, undefined> | null>(null);
+  const xAxisG = useRef<d3.Selection<SVGGElement, unknown, null, undefined> | null>(null);
 
   // Responsive margins based on screen width
   const responsiveMargin = {
@@ -60,10 +50,8 @@ const ChartContainer = ({
     left: Math.max(30, Math.min(50, dimensions.width * 0.05)),
   };
 
-  const innerWidth =
-    dimensions.width - responsiveMargin.left - responsiveMargin.right;
-  const innerHeight =
-    dimensions.height - responsiveMargin.top - responsiveMargin.bottom;
+  const innerWidth = dimensions.width - responsiveMargin.left - responsiveMargin.right;
+  const innerHeight = dimensions.height - responsiveMargin.top - responsiveMargin.bottom;
 
   // Responsive font sizes and stroke widths
   const fontSize = Math.max(8, Math.min(11, dimensions.width * 0.01));
@@ -112,16 +100,13 @@ const ChartContainer = ({
     if (!yAxisG.current || !xAxisG.current) return;
 
     const axisStyle = {
-      color: "rgba(255, 255, 255, 0.4)",
+      color: 'rgba(255, 255, 255, 0.4)',
       fontSize: `${fontSize}px`,
-      fontFamily: "system-ui, -apple-system, sans-serif",
-      fontWeight: "500",
+      fontFamily: 'system-ui, -apple-system, sans-serif',
+      fontWeight: '500',
     };
 
-    const yTicks = Math.max(
-      3,
-      Math.min(6, Math.floor(dimensions.height / 100))
-    );
+    const yTicks = Math.max(3, Math.min(6, Math.floor(dimensions.height / 100)));
     yAxisG.current
       .transition()
       .duration(200)
@@ -130,23 +115,21 @@ const ChartContainer = ({
         d3
           .axisLeft(yScale.current)
           .tickSize(-innerWidth)
-          .tickFormat((d) => d3.format(",.2f")(d as number))
+          .tickFormat((d) => d3.format(',.2f')(d as number))
           .ticks(yTicks)
           .tickPadding(8)
       )
       .call((g) => {
-        g.selectAll("line")
-          .attr("stroke", "rgba(255, 255, 255, 0.08)")
-          .attr("stroke-dasharray", "2,2");
-        g.selectAll("text")
-          .attr("fill", axisStyle.color)
-          .style("font-size", axisStyle.fontSize)
-          .style("font-family", axisStyle.fontFamily)
-          .style("font-weight", axisStyle.fontWeight)
-          .style("text-shadow", "0 0 10px rgba(255,255,255,0.1)");
-        g.select(".domain")
-          .attr("stroke", "rgba(255, 255, 255, 0.15)")
-          .attr("stroke-width", "1.5");
+        g.selectAll('line')
+          .attr('stroke', 'rgba(255, 255, 255, 0.08)')
+          .attr('stroke-dasharray', '2,2');
+        g.selectAll('text')
+          .attr('fill', axisStyle.color)
+          .style('font-size', axisStyle.fontSize)
+          .style('font-family', axisStyle.fontFamily)
+          .style('font-weight', axisStyle.fontWeight)
+          .style('text-shadow', '0 0 10px rgba(255,255,255,0.1)');
+        g.select('.domain').attr('stroke', 'rgba(255, 255, 255, 0.15)').attr('stroke-width', '1.5');
       });
 
     const xTicks = Math.max(4, Math.min(8, Math.floor(dimensions.width / 100)));
@@ -154,26 +137,18 @@ const ChartContainer = ({
       .transition()
       .duration(200)
       .ease(d3.easeLinear)
-      .call(
-        d3
-          .axisBottom(xScale.current)
-          .tickSize(-innerHeight)
-          .ticks(xTicks)
-          .tickPadding(8)
-      )
+      .call(d3.axisBottom(xScale.current).tickSize(-innerHeight).ticks(xTicks).tickPadding(8))
       .call((g) => {
-        g.selectAll("line")
-          .attr("stroke", "rgba(255, 255, 255, 0.08)")
-          .attr("stroke-dasharray", "2,2");
-        g.selectAll("text")
-          .attr("fill", axisStyle.color)
-          .style("font-size", axisStyle.fontSize)
-          .style("font-family", axisStyle.fontFamily)
-          .style("font-weight", axisStyle.fontWeight)
-          .style("text-shadow", "0 0 10px rgba(255,255,255,0.1)");
-        g.select(".domain")
-          .attr("stroke", "rgba(255, 255, 255, 0.15)")
-          .attr("stroke-width", "1.5");
+        g.selectAll('line')
+          .attr('stroke', 'rgba(255, 255, 255, 0.08)')
+          .attr('stroke-dasharray', '2,2');
+        g.selectAll('text')
+          .attr('fill', axisStyle.color)
+          .style('font-size', axisStyle.fontSize)
+          .style('font-family', axisStyle.fontFamily)
+          .style('font-weight', axisStyle.fontWeight)
+          .style('text-shadow', '0 0 10px rgba(255,255,255,0.1)');
+        g.select('.domain').attr('stroke', 'rgba(255, 255, 255, 0.15)').attr('stroke-width', '1.5');
       });
   }, [dimensions.height, dimensions.width]);
 
@@ -185,19 +160,19 @@ const ChartContainer = ({
 
     // Update price text
     priceCard
-      .select("text")
-      .text(`$${d3.format(",.2f")(dataPoint)}`)
-      .attr("fill", "url(#lineGradient)")
-      .style("font-size", `${fontSize * 1.2}px`)
-      .style("font-weight", "600")
-      .style("text-shadow", "0 0 10px rgba(255,255,255,0.2)");
+      .select('text')
+      .text(`$${d3.format(',.2f')(dataPoint)}`)
+      .attr('fill', 'url(#lineGradient)')
+      .style('font-size', `${fontSize * 1.2}px`)
+      .style('font-weight', '600')
+      .style('text-shadow', '0 0 10px rgba(255,255,255,0.2)');
 
     // Update position with smooth transition
     priceCard
       .transition()
       .duration(500)
       .ease(d3.easeLinear)
-      .attr("transform", `translate(${innerWidth - 90}, ${yPos})`);
+      .attr('transform', `translate(${innerWidth - 90}, ${yPos})`);
   }, [dataPoint, innerWidth, fontSize]);
 
   const runAnimationCycle = useCallback(() => {
@@ -220,66 +195,62 @@ const ChartContainer = ({
 
     pathSelection
       .datum(newData)
-      .attr("d", lineGenerator.current)
-      .attr("transform", null)
+      .attr('d', lineGenerator.current)
+      .attr('transform', null)
       .transition()
       .duration(500 / (1 + dataQueue.current.length * 0.1))
       .ease(d3.easeLinear)
-      .attr(
-        "transform",
-        `translate(${xScale.current(0) - xScale.current(1)}, 0)`
-      )
-      .on("end", () => {
+      .attr('transform', `translate(${xScale.current(0) - xScale.current(1)}, 0)`)
+      .on('end', () => {
         pathSelection
           .datum(dataAfterShift)
-          .attr("d", lineGenerator.current)
-          .attr("transform", null);
+          .attr('d', lineGenerator.current)
+          .attr('transform', null);
         runAnimationCycle();
       });
   }, [updateScales, updateAxes, updatePriceCard]);
 
   useEffect(() => {
-    if (dimensions.width <= 0 || dimensions.height <= 0 || !GRef.current)
-      return;
+    if (dimensions.width <= 0 || dimensions.height <= 0 || !GRef.current) return;
 
     const group = d3.select(GRef.current);
-    group.selectAll(".axis").remove();
+    group.selectAll('.axis').remove();
 
-    yAxisG.current = group.append("g").attr("class", "axis axis--y");
+    yAxisG.current = group.append('g').attr('class', 'axis axis--y');
     xAxisG.current = group
-      .append("g")
-      .attr("class", "axis axis--x")
-      .attr("transform", `translate(0,${innerHeight})`);
+      .append('g')
+      .attr('class', 'axis axis--x')
+      .attr('transform', `translate(0,${innerHeight})`);
 
     xScale.current.range([0, innerWidth]);
     yScale.current.range([innerHeight, 0]);
 
     xAxisG.current.call(d3.axisBottom(xScale.current));
 
-    group.selectAll(".price-card").remove();
+    group.selectAll('.price-card').remove();
     const priceCard = group
-      .append("g")
-      .attr("class", "price-card")
-      .attr("transform", `translate(${innerWidth + 30}, 0)`);
+      .append('g')
+      .attr('class', 'price-card')
+      .attr('transform', `translate(${innerWidth + 30}, 0)`);
     priceCard
-      .append("rect")
-      .attr("width", Math.max(60, dimensions.width * 0.08))
-      .attr("height", Math.max(20, dimensions.height * 0.05))
-      .attr("rx", 6)
-      .attr("fill", "rgba(15, 23, 42, 0.8)")
-      .attr("stroke", "rgba(59, 130, 246, 0.3)")
-      .attr("stroke-width", "1")
-      .style("filter", "drop-shadow(0 0 10px rgba(59, 130, 246, 0.2))");
+      .append('rect')
+      .attr('width', Math.max(60, dimensions.width * 0.08))
+      .attr('height', Math.max(20, dimensions.height * 0.05))
+      .attr('rx', 6)
+      .attr('fill', 'rgba(15, 23, 42, 0.8)')
+      .attr('stroke', 'rgba(59, 130, 246, 0.3)')
+      .attr('stroke-width', '1')
+      .style('filter', 'drop-shadow(0 0 10px rgba(59, 130, 246, 0.2))');
     priceCard
-      .append("text")
-      .attr("x", Math.max(30, dimensions.width * 0.04))
-      .attr("y", Math.max(14, dimensions.height * 0.035))
-      .attr("text-anchor", "middle")
-      .attr("fill", "url(#lineGradient)")
-      .style("font-size", `${fontSize * 1.2}px`)
-      .style("font-family", "system-ui, -apple-system, sans-serif")
-      .style("font-weight", "600")
-      .style("text-shadow", "0 0 10px rgba(255,255,255,0.2)");
+      .append('text')
+      .attr('x', Math.max(30, dimensions.width * 0.04))
+      .attr('y', Math.max(14, dimensions.height * 0.035))
+      .attr('text-anchor', 'middle')
+      .attr('fill', 'url(#lineGradient)')
+      .style('font-size', `${fontSize * 1.2}px`)
+      .style('font-family', 'system-ui, -apple-system, sans-serif')
+      .style('font-weight', '600')
+      .style('text-shadow', '0 0 10px rgba(255,255,255,0.2)');
     priceCardRef.current = priceCard.node();
   }, [dimensions.width, dimensions.height, innerWidth, innerHeight]);
 
@@ -291,9 +262,7 @@ const ChartContainer = ({
       updateScales(initialData);
       updateAxes();
       updatePriceCard();
-      d3.select(pathRef.current)
-        .datum(initialData)
-        .attr("d", lineGenerator.current);
+      d3.select(pathRef.current).datum(initialData).attr('d', lineGenerator.current);
 
       isInitialized.current = true;
       if (dataQueue.current.length > 0) {
@@ -305,14 +274,7 @@ const ChartContainer = ({
         runAnimationCycle();
       }
     }
-  }, [
-    dataPoint,
-    runAnimationCycle,
-    visibleCount,
-    updateScales,
-    updateAxes,
-    updatePriceCard,
-  ]);
+  }, [dataPoint, runAnimationCycle, visibleCount, updateScales, updateAxes, updatePriceCard]);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -358,7 +320,7 @@ const ChartContainer = ({
         preserveAspectRatio="xMidYMid meet"
         className="overflow-visible absolute inset-0"
         style={{
-          filter: "drop-shadow(0 0 20px rgba(59, 130, 246, 0.1))",
+          filter: 'drop-shadow(0 0 20px rgba(59, 130, 246, 0.1))',
         }}
       >
         <defs>
@@ -379,12 +341,7 @@ const ChartContainer = ({
             <feComposite in="SourceGraphic" in2="blur" operator="over" />
           </filter>
           {/* Grid pattern */}
-          <pattern
-            id="grid"
-            width="20"
-            height="20"
-            patternUnits="userSpaceOnUse"
-          >
+          <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
             <path
               d="M 20 0 L 0 0 0 20"
               fill="none"
