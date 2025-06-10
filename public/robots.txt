@@ -1,0 +1,6 @@
+# Allow all crawlers
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://real-time-cryptocurrency-price-trac.vercel.app/sitemap.xml
