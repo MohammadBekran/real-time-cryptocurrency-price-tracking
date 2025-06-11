@@ -6,3 +6,6 @@ pnpm lint
 
 # Run Prettier
 pnpm format
+
+# Run tests
+pnpm test
